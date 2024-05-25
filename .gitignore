@@ -1,7 +1,9 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*/__pycache__/*
 *.py[cod]
 *$py.class
+*.pyc
 
 # C extensions
 *.so
@@ -99,3 +101,4 @@ venv.bak/
 # Other
 .DS_Store
 Thumbs.db
+book_rental_project/__pycache__/settings.cpython-312.pyc
