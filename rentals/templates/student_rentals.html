@@ -1,0 +1,18 @@
+<!-- rentals/templates/student_rentals.html -->
+{% extends 'base.html' %}
+
+{% block title %}Student Rentals{% endblock %}
+
+{% block content %}
+<h1>Rentals for {{ rentals.first.user.username }}</h1>
+<ul>
+    {% for rental in rentals %}
+    <li>
+        <p><strong>Book:</strong> {{ rental.book.title }}</p>
+        <p><strong>Start Date:</strong> {{ rental.start_date }}</p>
+        <p><strong>End Date:</strong> {{ rental.end_date }}</p>
+        <p><strong>Fee:</strong> ${{ rental.calculate_fee }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

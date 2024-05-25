@@ -1,0 +1,33 @@
+<!-- rentals/templates/base.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Book Rental System{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Book Rental System</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'start_rental' %}">Start Rental</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'student_rentals' user_id=user.id %}">My Rentals</a></li>
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'register' %}">Register</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 Book Rental System</p>
+    </footer>
+</body>
+</html>

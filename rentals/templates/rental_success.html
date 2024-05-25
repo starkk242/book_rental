@@ -1,0 +1,10 @@
+<!-- rentals/templates/rental_success.html -->
+{% extends 'base.html' %}
+
+{% block title %}Rental Success{% endblock %}
+
+{% block content %}
+<h1>Rental Successful</h1>
+<p>Your rental has been successfully created!</p>
+<a href="{% url 'start_rental' %}">Start another rental</a>
+{% endblock %}
