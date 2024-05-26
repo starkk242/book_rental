@@ -1,8 +1,7 @@
-# rentals/utils.py
 import requests
 
 def fetch_book_details(title):
-    response = requests.get(f'https://openlibrary.org/search.json?title={title}')
+    response = requests.get(f'https://openlibrary.org/search.json?title={title}&fields=number_of_pages_median,title,author_name')
     if response.status_code == 200:
         data = response.json()
         if data['docs']:

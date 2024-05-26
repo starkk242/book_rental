@@ -1,18 +1,67 @@
-<!-- rentals/templates/student_rentals.html -->
 {% extends 'base.html' %}
 
 {% block title %}Student Rentals{% endblock %}
 
 {% block content %}
-<h1>Rentals for {{ rentals.first.user.username }}</h1>
-<ul>
-    {% for rental in rentals %}
-    <li>
-        <p><strong>Book:</strong> {{ rental.book.title }}</p>
-        <p><strong>Start Date:</strong> {{ rental.start_date }}</p>
-        <p><strong>End Date:</strong> {{ rental.end_date }}</p>
-        <p><strong>Fee:</strong> ${{ rental.calculate_fee }}</p>
-    </li>
-    {% endfor %}
-</ul>
+<div class="container my-4">
+    {% if grouped_rentals %}
+        {% for user, rentals in grouped_rentals.items %}
+            <h1 class="mb-4">Rentals for {{ user.username }}</h1>
+            <div class="row">
+                {% for rental in rentals %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ rental.book.title }}</h5>
+                                <p class="card-text">
+                                    <strong>Start Date:</strong> {{ rental.start_date }}<br>
+                                    <strong>End Date:</strong> {{ rental.end_date }}<br>
+                                    <strong>Fee:</strong> ${{ rental.calculate_fee }}
+                                </p>
+                                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#extendRentalModal-{{ rental.id }}">
+                                    Extend Rental
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Modal for extending rental -->
+                    <div class="modal fade" id="extendRentalModal-{{ rental.id }}" tabindex="-1" role="dialog" aria-labelledby="extendRentalModalLabel-{{ rental.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="extendRentalModalLabel-{{ rental.id }}">Extend Rental for {{ rental.book.title }}</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="post" action="{% url 'extend_rental' rental.id %}">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label for="new_end_date-{{ rental.id }}">New End Date:</label>
+                                            <input type="date" class="form-control" id="new_end_date-{{ rental.id }}" name="end_date" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Extend Rental</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <h1 class="text-center">No Rentals Found</h1>
+    {% endif %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.modal').on('show.bs.modal', function (e) {
+            var rentalId = $(e.relatedTarget).data('rental-id');
+            $('#extendRentalForm-' + rentalId).attr('action', '{% url "extend_rental" 0 %}'.replace('0', rentalId));
+        });
+    });
+</script>
 {% endblock %}

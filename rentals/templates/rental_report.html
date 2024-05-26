@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+
+{% block title %}Rental Report{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <h1 class="mb-4">Rental Report</h1>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Total Rentals per Book</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for rental in rentals_per_book %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ rental.book__title }}
+                        <span class="badge badge-primary badge-pill">{{ rental.total_rentals }} rentals</span>
+                    </li>
+                {% endfor %}
+            </ul>
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-3">
+                    {% if rentals_per_book.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1" aria-label="First">
+                                <span aria-hidden="true">&laquo;&laquo;</span>
+                                <span class="sr-only">First</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ rentals_per_book.previous_page_number }}" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                                <span class="sr-only">Previous</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                    {% for num in rentals_per_book.paginator.page_range %}
+                        {% if rentals_per_book.number == num %}
+                            <li class="page-item active"><a class="page-link">{{ num }}</a></li>
+                        {% elif num > rentals_per_book.number|add:'-3' and num < rentals_per_book.number|add:'3' %}
+                            <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if rentals_per_book.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ rentals_per_book.next_page_number }}" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ rentals_per_book.paginator.num_pages }}" aria-label="Last">
+                                <span aria-hidden="true">&raquo;&raquo;</span>
+                                <span class="sr-only">Last</span>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Total Rentals per User</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for rental in rentals_per_user %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ rental.user__username }}
+                        <span class="badge badge-primary badge-pill">{{ rental.total_rentals }} rentals</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Average Rental Duration</h2>
+        </div>
+        <div class="card-body">
+            <p class="card-text">{{ average_rental_duration }} days</p>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2>Most Rented Books</h2>
+        </div>
+        <div class="card-body">
+            <ul class="list-group">
+                {% for rental in most_rented_books %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ rental.book__title }}
+                        <span class="badge badge-primary badge-pill">{{ rental.total_rentals }} rentals</span>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

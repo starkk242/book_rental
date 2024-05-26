@@ -1,16 +1,158 @@
-<!-- rentals/templates/start_rental.html -->
 {% extends 'base.html' %}
 
 {% block title %}Start Rental{% endblock %}
 
 {% block content %}
-<h1>Start a New Rental</h1>
-<form method="post">
-    {% csrf_token %}
-    <label for="title">Book Title:</label>
-    <input type="text" id="title" name="title" required><br>
-    <label for="user_id">User ID:</label>
-    <input type="number" id="user_id" name="user_id" required><br>
-    <button type="submit">Start Rental</button>
-</form>
+<div class="container">
+    <h1 class="my-4">Start a New Rental</h1>
+    <form method="post" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="title">Book Title:</label>
+            <input type="text" class="form-control" id="title" name="title" required list="bookTitles">
+            <datalist id="bookTitles"></datalist>
+            <div class="invalid-feedback">Please enter the book title.</div>
+        </div>
+        
+        <div class="form-group">
+            <label for="user_id">Select User:</label>
+            <div class="input-group">
+                <select class="form-control" id="user_id" name="user_id" required>
+                    <option value="" disabled selected>Select a user</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}">{{ user.username }}</option>
+                    {% endfor %}
+                </select>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-outline-primary" onclick="showAddUserModal()">Add User</button>
+                </div>
+            </div>
+            <div class="invalid-feedback">Please select a user.</div>
+        </div>
+        <button type="submit" class="btn btn-primary">Start Rental</button>
+    </form>
+
+    <!-- Modal for adding a new user -->
+    <div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addUserForm" method="post" onsubmit="addUser(event)">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="new_username">Username:</label>
+                            <input type="text" class="form-control" id="new_username" name="username" required>
+                            <div class="invalid-feedback">Please enter a username.</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_email">Email:</label>
+                            <input type="email" class="form-control" id="new_email" name="email" required>
+                            <div class="invalid-feedback">Please enter an email.</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="new_password">Password:</label>
+                            <input type="password" class="form-control" id="new_password" name="password" required>
+                            <div class="invalid-feedback">Please enter a password.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Add User</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showAddUserModal() {
+        $('#addUserModal').modal('show');
+    }
+
+    function hideAddUserModal() {
+        $('#addUserModal').modal('hide');
+    }
+
+    async function addUser(event) {
+        event.preventDefault();
+        const form = document.getElementById('addUserForm');
+        const formData = new FormData(form);
+        
+        try {
+            const response = await fetch('{% url "add_user" %}', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            });
+            
+            if (response.ok) {
+                const newUser = await response.json();
+                const userSelect = document.getElementById('user_id');
+                const option = document.createElement('option');
+                option.value = newUser.id;
+                option.text = newUser.username;
+                userSelect.appendChild(option);
+                userSelect.value = newUser.id;
+                hideAddUserModal();
+            } else {
+                alert('Failed to add user');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+    
+    // Bootstrap form validation
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    async function fetchBookTitles(title) {
+        const response = await fetch(`https://openlibrary.org/search.json?title=${title}&limit=5&fields=number_of_pages_median,title,author_name`);
+        const data = await response.json();
+        return data.docs.map(book => book.title);
+    }
+
+    // Function to update book titles in the dropdown
+    async function updateBookTitles(event) {
+        const input = event.target;
+        const titles = await fetchBookTitles(input.value);
+        const datalist = document.getElementById('bookTitles');
+
+        // Clear existing options
+        datalist.innerHTML = '';
+
+        // Add new options
+        titles.forEach(title => {
+            const option = document.createElement('option');
+            option.value = title;
+            datalist.appendChild(option);
+        });
+    }
+
+    // Event listener for input change
+    const bookTitleInput = document.getElementById('title');
+    bookTitleInput.addEventListener('input', updateBookTitles);
+
+
+</script>
 {% endblock %}
