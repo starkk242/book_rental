@@ -4,37 +4,65 @@
 
 {% block content %}
 <style>
-    .login-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-}
+    .form-container {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
 
-.login-form {
-    width: 300px; /* Adjust width as needed */
-    margin: 0 auto; /* Center horizontally */
-}
+    .form-container h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
 
-.error-message {
-    color: red;
-}
+    .form-container form label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
 
-.additional-options {
-    margin-top: 10px;
-}
+    .form-container form input[type="text"],
+    .form-container form input[type="password"] {
+        width: calc(100% - 12px);
+        padding: 6px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 16px;
+    }
+
+    .form-container form button[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        border: none;
+        border-radius: 3px;
+        background-color: #007bff;
+        color: #fff;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        margin-top: 5px;
+        text-align: center;
+    }
 </style>
 
-<div class="login-container">
+<div class="form-container">
     <h2>Login</h2>
-    <form method="post" class="login-form">
+    <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
         {% if form.errors %}
             <p class="error-message">Invalid username or password. Please try again.</p>
         {% endif %}
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="submit">Login</button>
     </form>
 </div>
 {% endblock %}

@@ -1,10 +1,48 @@
-<!-- rentals/templates/rental_success.html -->
 {% extends 'base.html' %}
 
 {% block title %}Rental Success{% endblock %}
 
 {% block content %}
-<h1>Rental Successful</h1>
-<p>Your rental has been successfully created!</p>
-<a href="{% url 'start_rental' %}">Start another rental</a>
+<style>
+    .success-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        text-align: center;
+    }
+
+    .success-heading {
+        font-size: 32px;
+        margin-bottom: 20px;
+        color: #007bff;
+    }
+
+    .success-message {
+        font-size: 18px;
+        margin-bottom: 30px;
+    }
+
+    .success-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .success-link:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="success-container">
+    <h1 class="success-heading">Rental Successful</h1>
+    <p class="success-message">Your rental has been successfully created!</p>
+    <a href="{% url 'start_rental' %}" class="success-link">Start another rental</a>
+</div>
 {% endblock %}

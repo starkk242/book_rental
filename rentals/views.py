@@ -24,7 +24,7 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect('student_rentals', user_id=user.id)
+            return redirect('student_rentals')
     else:
         form = UserRegistrationForm()
     return render(request, 'register.html', {'form': form})
